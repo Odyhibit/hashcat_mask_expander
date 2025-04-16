@@ -15,6 +15,7 @@ WILDCARDS = {
     '?s': " " + string.punctuation
 }
 
+
 # Parse pattern into segments (fixed strings or wildcard lists)
 def parse_pattern(pattern):
     result = []
@@ -22,7 +23,7 @@ def parse_pattern(pattern):
     buffer = ""
     while i < len(pattern):
         if pattern[i] == '?' and i + 1 < len(pattern):
-            token = pattern[i:i+2]
+            token = pattern[i:i + 2]
             if token in WILDCARDS:
                 if buffer:
                     result.append([buffer])
@@ -36,17 +37,21 @@ def parse_pattern(pattern):
         result.append([buffer])
     return result
 
+
 # Estimate output size in bytes
 def estimate_size(combos, avg_length):
     return combos * (avg_length + 1)  # +1 for newline
 
+
 def confirm_large_file(size_bytes):
     size_mb = size_bytes / (1024 * 1024)
     if size_mb > 100:
-        confirm = input(f"[!] Estimated file size is {size_mb:.2f} MB. Continue? [y/N] ").strip().lower()
+        confirm = input(
+            f"[\\033[91m!\\033[0m] Estimated file size is {size_mb:.2f} MB. Continue? [y/N] ").strip().lower()
         if confirm != 'y':
             print("Aborted.")
             sys.exit(1)
+
 
 def main():
     parser = argparse.ArgumentParser(description="Generate wordlist from HashCat-style pattern.")
@@ -58,7 +63,7 @@ def main():
     if not output_file:
         output_file = input("Enter output filename [wordlist.txt]: ").strip() or "wordlist.txt"
 
-    print("[+] Parsing pattern...")
+    print("[\\033[92m+\\033[0m] Parsing pattern...")
     parsed = parse_pattern(args.pattern)
     total_combos = 1
     for item in parsed:
@@ -68,14 +73,16 @@ def main():
     size_bytes = estimate_size(total_combos, avg_len)
     confirm_large_file(size_bytes)
 
-    print(f"[+] Generating {total_combos:,} combinations...")
+    print(f"[\\033[92m+\\033[0m] Generating {total_combos:,} combinations...")
     combos = itertools.product(*parsed)
+    # print(parsed)
 
     with open(output_file, 'w', encoding='utf-8') as f:
         for combo in tqdm(combos, total=total_combos, unit="words"):
             f.write(''.join(combo) + '\n')
 
-    print(f"[+] Done. Wordlist saved to {output_file}")
+    print(f"[\\033[92m+\\033[0m] Done. Wordlist saved to {output_file}")
+
 
 if __name__ == "__main__":
     main()
