@@ -47,7 +47,7 @@ def confirm_large_file(size_bytes):
     size_mb = size_bytes / (1024 * 1024)
     if size_mb > 100:
         confirm = input(
-            f"[\\033[91m!\\033[0m] Estimated file size is {size_mb:.2f} MB. Continue? [y/N] ").strip().lower()
+            f"[\x1b[31m+\x1b[0m] Estimated file size is {size_mb:.2f} MB. Continue? [y/N] ").strip().lower()
         if confirm != 'y':
             print("Aborted.")
             sys.exit(1)
@@ -63,7 +63,7 @@ def main():
     if not output_file:
         output_file = input("Enter output filename [wordlist.txt]: ").strip() or "wordlist.txt"
 
-    print("[\\033[92m+\\033[0m] Parsing pattern...")
+    print("[\x1b[32m+\x1b[0m] Parsing pattern...")
     parsed = parse_pattern(args.pattern)
     total_combos = 1
     for item in parsed:
@@ -73,7 +73,7 @@ def main():
     size_bytes = estimate_size(total_combos, avg_len)
     confirm_large_file(size_bytes)
 
-    print(f"[\\033[92m+\\033[0m] Generating {total_combos:,} combinations...")
+    print(f"[\x1b[32m+\x1b[0m]Generating {total_combos:,} combinations...")
     combos = itertools.product(*parsed)
     # print(parsed)
 
@@ -81,7 +81,7 @@ def main():
         for combo in tqdm(combos, total=total_combos, unit="words"):
             f.write(''.join(combo) + '\n')
 
-    print(f"[\\033[92m+\\033[0m] Done. Wordlist saved to {output_file}")
+    print(f"[\x1b[32m+\x1b[0m] Done. Wordlist saved to {output_file}")
 
 
 if __name__ == "__main__":
